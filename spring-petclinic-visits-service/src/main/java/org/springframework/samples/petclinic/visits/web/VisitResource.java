@@ -25,6 +25,7 @@ import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.samples.petclinic.visits.model.Visit;
+import org.springframework.samples.petclinic.visits.model.VisitDTO;
 import org.springframework.samples.petclinic.visits.model.VisitRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,9 +54,12 @@ class VisitResource {
     @PostMapping("owners/*/pets/{petId}/visits")
     @ResponseStatus(HttpStatus.CREATED)
     public Visit create(
-        @Valid @RequestBody Visit visit,
+        @Valid @RequestBody VisitDTO visitDto,
         @PathVariable("petId") @Min(1) int petId) {
-
+        Visit visit = Visit.builder()
+            .date(visitDto.getDate())
+            .description(visitDto.getDescription())
+            .build();
         visit.setPetId(petId);
         log.info("Saving visit {}", visit);
         return visitRepository.save(visit);
